@@ -12,7 +12,7 @@ import config
 def train():
     os.makedirs(config.MODEL_DIR, exist_ok=True)
 
-    # df = config.load_data()
+    df = config.load_data()
 
     # Gender distribution (only if enabled)
     if config.WITH_GENDER:

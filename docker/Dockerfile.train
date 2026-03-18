@@ -5,14 +5,14 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# COPY docker/requirements/requirements-train.txt requirements.txt
+COPY docker/requirements/requirements-train.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY config.py train.py mlflow_logger.py ./
 
 # TODO: Uncomment the command below
-# CMD ["python", "mlflow_logger.py"]
+CMD ["python", "mlflow_logger.py"]

@@ -5,10 +5,10 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# RUN pip install --no-cache-dir flask requests
+RUN pip install --no-cache-dir flask requests
 
-# COPY load_balancer.py ./
+COPY load_balancer.py ./
 
 EXPOSE 8080
 # Uncomment
-# CMD ["python", "load_balancer.py"]
+CMD ["python", "load_balancer.py"]

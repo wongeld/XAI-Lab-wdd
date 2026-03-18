@@ -1,6 +1,5 @@
 # evaluate.py
 import os
-import shap
 import time
 import joblib
 import numpy as np
@@ -28,6 +27,14 @@ from fairlearn.metrics import (
     false_positive_rate,
     false_negative_rate,
 )
+
+
+try:
+    import shap
+    SHAP_IMPORT_ERROR = None
+except Exception as e:
+    shap = None
+    SHAP_IMPORT_ERROR = e
 
 
 # Plot configuration
@@ -65,7 +72,7 @@ def evaluate():
         print(f"Waiting for model {config.MODEL_PATH}...")
         time.sleep(5)
 
-    # df = config.load_data()
+    df = config.load_data()
 
     # Drop gender from X if disabled
     drop_cols = [config.TARGET]
@@ -76,7 +83,7 @@ def evaluate():
     y = config.encode_target(df[config.TARGET])
 
     # Sensitive feature only if gender is enabled
-    # sensitive = df[config.PROTECTED_ATTR] if config.WITH_GENDER else None
+    sensitive = df[config.PROTECTED_ATTR] if config.WITH_GENDER else None
 
     # Train/test split
     if config.WITH_GENDER:
@@ -183,23 +190,26 @@ def evaluate():
     else:
         print("Gender disabled — skipping fairness evaluation and plots.")
 
-    # ============================
-    # SHAP Analysis
-    # ============================
     X_test_t = preprocessor.transform(X_test)
     feature_names = preprocessor.get_feature_names_out()
 
-    explainer = shap.TreeExplainer(model.get_booster())
-    shap_values = explainer.shap_values(X_test_t)
+    # ============================
+    # SHAP Analysis
+    # ============================
+    if shap is None:
+        print(f"Skipping SHAP analysis due to import error: {SHAP_IMPORT_ERROR}")
+    else:
+        explainer = shap.TreeExplainer(model.get_booster())
+        shap_values = explainer.shap_values(X_test_t)
 
-    shap.summary_plot(
-        shap_values,
-        X_test_t,
-        feature_names=feature_names,
-        show=False
-    )
-    plt.title("SHAP Feature Importance")
-    save_fig("shap_summary")
+        shap.summary_plot(
+            shap_values,
+            X_test_t,
+            feature_names=feature_names,
+            show=False
+        )
+        plt.title("SHAP Feature Importance")
+        save_fig("shap_summary")
 
     # ============================
     # LIME Analysis

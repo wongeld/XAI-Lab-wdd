@@ -2,10 +2,10 @@ import os
 import pandas as pd
 
 # Paths
-DATA_PATH = "data/credit_dataset2.csv"  # TODO student to modify the dataset path
+DATA_PATH = "data/credit_dataset1.csv"  # TODO student to modify the dataset path
 MODEL_DIR = "model"
 VIZ_DIR = "visualizations"
-MODEL_PATH = os.path.join(MODEL_DIR, "xgb_credit_model2.pkl")
+MODEL_PATH = os.path.join(MODEL_DIR, "xgb_credit_model1.pkl")
 RANDOM_STATE = 42
 
 # TODO: Set to false, if instructed
